@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idle Death Gamble</title>
+    <style>
+        body {
+            font-family: MS gothic;
+            background-image: url(https://staticg.sportskeeda.com/editor/2023/09/c7a31-16938663098356-1920.jpg?w=640);
+            background-repeat: no-repeat;
+            background-size: cover;
+            backdrop-filter: blur(4px);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 50px;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        button {
+            background-image: linear-gradient(#5632a8, #ec5fff);
+            color: white;
+            border: none;
+            font-family: "MS Gothic", sans-serif;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: default;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-image: linear-gradient(#ec5fff, #5632a8);
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        #history {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #history div {
+            margin-bottom: 10px;
+        }
+
+        #reset-btn {
+            margin-top: 20px;
+        }
+
+        input {
+            font-family: MS gothic;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Idle Death Gamble</h1>
+        <p>Current Amount: <span id="starting-amount">1000</span></p>
+        <input type="number" id="bet-amount" placeholder="Enter bet amount">
+        <button onclick="gamble()">Gamble</button>
+        <p id="result"></p>
+        <div id="history"></div>
+        <button id="reset-btn" style="display: none;" onclick="resetGame()">Reset Game</button>
+    </div>
+
+    <script>
+        let currentAmount = 1000;
+        let jackpotHitCount = 0;
+        const originalChances = {
+            loss: 30,
+            noLossNoProfit: 20,
+            profit: 45,
+            jackpot: 5
+        };
+
+        document.getElementById('starting-amount').innerText = currentAmount;
+
+        function validateBet(amount) {
+            return amount > 0 && (amount % 5 === 0 || amount % 10 === 0);
+        }
+
+        function calculateOutcome(amount) {
+            let lossChance = originalChances.loss - (2 * jackpotHitCount);
+            let noLossNoProfitChance = originalChances.noLossNoProfit;
+            let profitChance = originalChances.profit;
+            let jackpotChance = originalChances.jackpot + (2 * jackpotHitCount);
+
+            if (lossChance < originalChances.loss) {
+                lossChance = originalChances.loss;
+                noLossNoProfitChance -= 2;
+            }
+            if (noLossNoProfitChance < originalChances.noLossNoProfit) {
+                noLossNoProfitChance = originalChances.noLossNoProfit;
+                profitChance -= 2;
+            }
+
+            const totalChances = lossChance + noLossNoProfitChance + profitChance + jackpotChance;
+            const randomChance = Math.floor(Math.random() * totalChances);
+
+            if (randomChance < lossChance) {
+                const lossPercent = Math.ceil(Math.random() * 16) * 5;
+                return -Math.round((amount * lossPercent) / 100);
+            } else if (randomChance < lossChance + noLossNoProfitChance) {
+                return 0;
+            } else if (randomChance < lossChance + noLossNoProfitChance + profitChance) {
+                const profitPercent = Math.ceil(Math.random() * 20) * 5;
+                return Math.round((amount * profitPercent) / 100);
+            } else {
+                jackpotHitCount++;
+                return amount * 2;
+            }
+        }
+
+        function updateHistory(betAmount, result, currentAmount, color) {
+            const historyDiv = document.getElementById('history');
+            const historyEntry = document.createElement('div');
+            historyEntry.textContent = `Bet: ${betAmount}, Result: ${result}, New Amount: ${currentAmount}`;
+            historyEntry.style.color = color;
+            historyDiv.prepend(historyEntry);
+        }
+
+        function gamble() {
+            const betAmount = parseInt(document.getElementById('bet-amount').value);
+            const maxBetAmount = Math.floor(currentAmount * 0.9);
+
+            if (!validateBet(betAmount)) {
+                alert('Please enter a valid multiple of 5 or 10.');
+                return;
+            }
+
+            if (currentAmount >= 2000 && betAmount < 1000) {
+                alert('When your balance is above 2000, you must bet 1000 or more.');
+                return;
+            }
+
+            if (betAmount > currentAmount) {
+                alert('You do not have enough balance to place this bet.');
+                return;
+            }
+
+            if (betAmount > maxBetAmount) {
+                alert(`You cannot bet more than 90% of your current amount. Maximum bet amount is ${maxBetAmount}.`);
+                return;
+            }
+
+            currentAmount -= betAmount;
+            document.getElementById('starting-amount').innerText = currentAmount;
+
+            document.getElementById('result').textContent = "Handing over the amount...";
+            setTimeout(() => {
+                document.getElementById('result').textContent = "...Gambling...";
+                setTimeout(() => {
+                    document.getElementById('result').textContent = "Collecting Amount...";
+                    setTimeout(() => {
+                        const outcome = calculateOutcome(betAmount);
+                        let resultText, color;
+                        if (outcome > 0) {
+                            resultText = outcome === betAmount * 2 ? "Jackpot! " : "You won! ";
+                            resultText += `Profit: ${betAmount} + ${outcome}`;
+                            color = "#38a832";
+                            currentAmount += outcome + betAmount;
+                        } else if (outcome < 0) {
+                            resultText = `You lost: ${betAmount} + ${Math.abs(outcome)}`;
+                            color = "#b80000";
+                            currentAmount += outcome;
+                        } else {
+                            resultText = "No loss, no profit.";
+                            color = "#3234a8";
+                            currentAmount += betAmount;
+                        }
+                        document.getElementById('result').textContent = resultText;
+                        document.getElementById('result').style.color = color;
+                        document.getElementById('starting-amount').innerText = currentAmount;
+                        updateHistory(betAmount, resultText, currentAmount, color);
+
+                        if (currentAmount >= 50000) {
+                            alert("Congratulations! You've won the game!");
+                            document.getElementById('reset-btn').style.display = 'block';
+                        } else if (currentAmount <= 0) {
+                            alert("You've lost all your money. Would you like to reset the game?");
+                            document.getElementById('reset-btn').style.display = 'block';
+                        }
+
+                        document.getElementById('bet-amount').value = '';
+                    }, 2000);
+                }, 2000);
+            }, 2000);
+        }
+
+        function resetGame() {
+            currentAmount = 1000;
+            jackpotHitCount = 0;
+            document.getElementById('starting-amount').innerText = currentAmount;
+            document.getElementById('result').textContent = "";
+            document.getElementById('result').style.color = "black";
+            document.getElementById('history').innerHTML = "";
+            document.getElementById('reset-btn').style.display = 'none';
+            document.getElementById('bet-amount').value = '';
+        }
+
+    </script>
+</body>
+
+</html>
