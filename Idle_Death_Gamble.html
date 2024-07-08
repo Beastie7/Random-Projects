@@ -229,8 +229,8 @@
             alt="Idle Death Gamble" class="header-image">
         <p>Current Amount: <span id="starting-amount">1000</span></p>
         <div class="coolinput">
-            <label for="bet-amount" class="text">Bet Amount:</label>
-            <input type="number" id="bet-amount" placeholder="Enter bet amount">
+            <label for="Gamble-amount" class="text">Gamble Amount:</label>
+            <input type="number" id="Gamble-amount" placeholder="Enter Gamble amount">
         </div>
         <button id="gamble-button" onclick="gamble()">Gamble</button>
         <p id="result"></p>
@@ -250,7 +250,7 @@
 
         document.getElementById('starting-amount').innerText = currentAmount;
 
-        function validateBet(amount) {
+        function validateGamble(amount) {
             return amount > 0 && (amount % 5 === 0 || amount % 10 === 0);
         }
 
@@ -286,39 +286,39 @@
             }
         }
 
-        function updateHistory(betAmount, result, currentAmount, color) {
+        function updateHistory(GambleAmount, result, currentAmount, color) {
             const historyDiv = document.getElementById('history');
             const historyEntry = document.createElement('div');
-            historyEntry.textContent = `Bet: ${betAmount}, Result: ${result}, New Amount: ${currentAmount}`;
+            historyEntry.textContent = `Gamble: ${GambleAmount}, Result: ${result}, New Amount: ${currentAmount}`;
             historyEntry.style.color = color;
             historyDiv.prepend(historyEntry);
         }
 
         function gamble() {
-            const betAmount = parseInt(document.getElementById('bet-amount').value);
-            const maxBetAmount = Math.floor(currentAmount * 0.9);
+            const GambleAmount = parseInt(document.getElementById('Gamble-amount').value);
+            const maxGambleAmount = Math.floor(currentAmount * 0.9);
 
-            if (!validateBet(betAmount)) {
+            if (!validateGamble(GambleAmount)) {
                 alert('Please enter a valid multiple of 5 or 10.');
                 return;
             }
 
-            if (currentAmount >= 2000 && betAmount < 500) {
-                alert('When your balance is above 2000, you must bet 500 or more.');
+            if (currentAmount >= 2000 && GambleAmount < 500) {
+                alert('When your balance is above 2000, you must Gamble 500 or more.');
                 return;
             }
 
-            if (betAmount > currentAmount) {
-                alert('You do not have enough balance to place this bet.');
+            if (GambleAmount > currentAmount) {
+                alert('You do not have enough balance to place this Gamble.');
                 return;
             }
 
-            if (betAmount > maxBetAmount) {
-                alert(`You cannot bet more than 90% of your current amount. Maximum bet amount is ${maxBetAmount}.`);
+            if (GambleAmount > maxGambleAmount) {
+                alert(`You cannot Gamble more than 90% of your current amount. Maximum Gamble amount is ${maxGambleAmount}.`);
                 return;
             }
 
-            currentAmount -= betAmount;
+            currentAmount -= GambleAmount;
             document.getElementById('starting-amount').innerText = currentAmount;
 
             document.getElementById('result').textContent = "Gambling...";
@@ -329,26 +329,26 @@
                 setTimeout(() => {
                     document.getElementById('result').textContent = "...Calculating current amount";
                     setTimeout(() => {
-                        const outcome = calculateOutcome(betAmount);
+                        const outcome = calculateOutcome(GambleAmount);
                         let resultText, color;
                         if (outcome > 0) {
-                            resultText = outcome === betAmount * 2 ? "Jackpot! " : "You won! ";
-                            resultText += `Profit: ${betAmount} + ${outcome}`;
+                            resultText = outcome === GambleAmount * 2 ? "Jackpot! " : "You won! ";
+                            resultText += `Profit: ${GambleAmount} + ${outcome}`;
                             color = "#38a832";
-                            currentAmount += outcome + betAmount;
+                            currentAmount += outcome + GambleAmount;
                         } else if (outcome < 0) {
-                            resultText = `You lost: ${betAmount} + ${Math.abs(outcome)}`;
+                            resultText = `You lost: ${GambleAmount} + ${Math.abs(outcome)}`;
                             color = "#b80000";
                             currentAmount += outcome;
                         } else {
                             resultText = "No loss, no profit.";
                             color = "#3234a8";
-                            currentAmount += betAmount;
+                            currentAmount += GambleAmount;
                         }
                         document.getElementById('result').textContent = resultText;
                         document.getElementById('result').style.color = color;
                         document.getElementById('starting-amount').innerText = currentAmount;
-                        updateHistory(betAmount, resultText, currentAmount, color);
+                        updateHistory(GambleAmount, resultText, currentAmount, color);
 
                         if (currentAmount >= 100000) {
                             alert("Congratulations! You've won the game!");
@@ -358,7 +358,7 @@
                             document.getElementById('reset-btn').style.display = 'block';
                         }
 
-                        document.getElementById('bet-amount').value = '';
+                        document.getElementById('Gamble-amount').value = '';
                         gambleButton.disabled = false;
                     }, 500);
                 }, 500);
@@ -373,7 +373,7 @@
             document.getElementById('result').style.color = "black";
             document.getElementById('history').innerHTML = "";
             document.getElementById('reset-btn').style.display = 'none';
-            document.getElementById('bet-amount').value = '';
+            document.getElementById('Gamble-amount').value = '';
         }
 
     </script>
