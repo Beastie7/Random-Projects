@@ -7,21 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Idle Death Gamble</title>
     <style>
-        @font-face {
-            font-family: "Century Gothic";
-            src: url("../fonts/gothic.eot");
-            src: url("../fonts/gothic.eot?#iefix") format("embedded-opentype"),
-                url("../fonts/gothic.woff2") format("woff2"),
-                url("../fonts/gothic.woff") format("woff"),
-                url("../fonts/gothic.ttf") format("truetype"),
-                url("../fonts/gothic.svg#gothic") format("svg");
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-
         body {
-            font-family: "Century Gothic", sans-serif;
+            font-family: monospace;
             font-weight: bolder;
             background-image: url(https://staticg.sportskeeda.com/editor/2023/09/c7a31-16938663098356-1920.jpg?w=640);
             background-repeat: no-repeat;
@@ -35,6 +22,9 @@
             height: 100vh;
         }
 
+        p {
+            font-size: 1.4em;
+        }
 
         .container {
             position: relative;
@@ -85,13 +75,12 @@
             align-items: center;
             cursor: default;
             border: none;
-            text-transform: uppercase;
             background-image: linear-gradient(#1c0d40, #e100ff);
             border-radius: 5px;
             color: white;
             font-weight: 300;
             font-size: 18px;
-            font-family: "Century Gothic", sans-serif;
+            font-family: monospace;
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.02, 0.01, 0.47, 1);
         }
@@ -162,7 +151,7 @@
             margin-top: 20px;
             background-color: #ffffff;
             margin-bottom: 20px;
-            font-size: 1.1em;
+            font-size: 1.5em;
             text-align: center;
             padding: 0 10px;
             font-weight: bold;
@@ -172,12 +161,13 @@
             background-color: white;
             margin-top: 20px;
             text-align: center;
-            max-height: 200px;
+            max-height: 100px;
             overflow-y: auto;
+            font-size: 1.2em;
         }
 
         #history div {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         #reset-btn {
@@ -211,7 +201,7 @@
             border: 2px #9e5dff solid;
             border-radius: 5px;
             background: #d9c8ff;
-            font-family: "Century Gothic";
+            font-family: monospace;
             font-size: 18px;
 
         }
@@ -232,13 +222,16 @@
             <label for="Gamble-amount" class="text">Gamble Amount:</label>
             <input type="number" id="Gamble-amount" placeholder="Enter Gamble amount">
         </div>
-        <button id="gamble-button" onclick="gamble()">Gamble</button>
+        <button id="gamble-button" onclick="gamble()">G A M B L E</button>
         <p id="result"></p>
         <div id="history"></div>
         <button id="reset-btn" style="display: none;" onclick="resetGame()">Reset Game</button>
     </div>
 
     <script>
+        window.onload = function () {
+            document.getElementById('Gamble-amount').focus();
+        };
         let currentAmount = 1000;
         let jackpotHitCount = 0;
         const originalChances = {
@@ -300,21 +293,25 @@
 
             if (!validateGamble(GambleAmount)) {
                 alert('Please enter a valid multiple of 5 or 10.');
+                document.getElementById('Gamble-amount').focus();  
                 return;
             }
 
             if (currentAmount >= 2000 && GambleAmount < 500) {
                 alert('When your balance is above 2000, you must Gamble 500 or more.');
+                document.getElementById('Gamble-amount').focus(); 
                 return;
             }
 
             if (GambleAmount > currentAmount) {
                 alert('You do not have enough balance to place this Gamble.');
+                document.getElementById('Gamble-amount').focus();  
                 return;
             }
 
             if (GambleAmount > maxGambleAmount) {
                 alert(`You cannot Gamble more than 90% of your current amount. Maximum Gamble amount is ${maxGambleAmount}.`);
+                document.getElementById('Gamble-amount').focus();  
                 return;
             }
 
@@ -360,10 +357,12 @@
 
                         document.getElementById('Gamble-amount').value = '';
                         gambleButton.disabled = false;
+                        document.getElementById('Gamble-amount').focus();  
                     }, 500);
                 }, 500);
             }, 500);
         }
+
 
         function resetGame() {
             currentAmount = 1000;
@@ -374,7 +373,9 @@
             document.getElementById('history').innerHTML = "";
             document.getElementById('reset-btn').style.display = 'none';
             document.getElementById('Gamble-amount').value = '';
+            document.getElementById('Gamble-amount').focus();  
         }
+
 
     </script>
 </body>
