@@ -297,6 +297,12 @@
                 return;
             }
 
+            if (GambleAmount < 50) {
+                alert('The maximum gamble amount is 50');
+                document.getElementById('Gamble-amount').focus();  
+                return;
+            }
+
             if (currentAmount >= 2000 && GambleAmount < 500) {
                 alert('When your balance is above 2000, you must Gamble 500 or more.');
                 document.getElementById('Gamble-amount').focus(); 
@@ -350,7 +356,7 @@
                         if (currentAmount >= 100000) {
                             alert("Congratulations! You've won the game!");
                             document.getElementById('reset-btn').style.display = 'block';
-                        } else if (currentAmount <= 0) {
+                        } else if (currentAmount <= 49) {
                             alert("You've lost all your money. Would you like to reset the game?");
                             document.getElementById('reset-btn').style.display = 'block';
                         }
@@ -366,7 +372,7 @@
 
         function resetGame() {
             currentAmount = 1000;
-            jackpotHitCount = 0;
+            jackpotHitCount = 1;
             document.getElementById('starting-amount').innerText = currentAmount;
             document.getElementById('result').textContent = "";
             document.getElementById('result').style.color = "black";
