@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -210,10 +209,25 @@
         input[type="number"]:focus {
             outline: none;
         }
+
+        .stats-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            text-align: left;
+            font-size: 0.9em;
+            font-family: monospace;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 200px;
+        }
     </style>
 </head>
 
 <body>
+
     <div class="container">
         <img src="https://mods.store.gx.me/mod/ce2c3e3d-d57b-4d3b-9a6c-5dac596fba47/cover/c803abe3-9046-4f6d-8d0c-f2b4ee58b8a0/webp-1280x720?e1a17d27bb3922bcbb1b03e877931df6"
             alt="Idle Death Gamble" class="header-image">
@@ -227,18 +241,29 @@
         <div id="history"></div>
         <button id="reset-btn" style="display: none;" onclick="resetGame()">Reset Game</button>
     </div>
+    <div class="stats-container">
+        <p>Highest Amount record: <span id="highest-curent">1500</span></p>
+        <p>Current % of Jackpots: <span id="jackpot-count">10</span></p>
+        <p>Highest Amount Gained: <span id="highest-gain">0</span></p>
+        <p>Highest Amount Lost: <span id="highest-loss">0</span></p>
+    </div>
 
     <script>
+        let highestCurrentAmount = 1500;
+        let highestGain = 0;
+        let highestLoss = 0;
+
+        let gameWon = false;
         window.onload = function () {
             document.getElementById('Gamble-amount').focus();
         };
-        let currentAmount = 1000;
+        let currentAmount = 1500;
         let jackpotHitCount = 0;
         const originalChances = {
             loss: 30,
             noLossNoProfit: 20,
-            profit: 45,
-            jackpot: 5
+            profit: 40,
+            jackpot: 10
         };
 
         document.getElementById('starting-amount').innerText = currentAmount;
@@ -267,17 +292,23 @@
 
             if (randomChance < lossChance) {
                 const lossPercent = Math.ceil(Math.random() * 16) * 5;
-                return -Math.round((amount * lossPercent) / 100);
+                return -Math.round((amount * lossPercent) / 100 / 5) * 5;
             } else if (randomChance < lossChance + noLossNoProfitChance) {
                 return 0;
             } else if (randomChance < lossChance + noLossNoProfitChance + profitChance) {
                 const profitPercent = Math.ceil(Math.random() * 20) * 5;
-                return Math.round((amount * profitPercent) / 100);
+                return Math.round((amount * profitPercent) / 100 / 5) * 5;
             } else {
                 jackpotHitCount++;
-                return amount * 2;
+                return Math.round(amount * 2 / 5) * 5;
             }
         }
+
+        document.getElementById('Gamble-amount').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                gamble();
+            }
+        });
 
         function updateHistory(GambleAmount, result, currentAmount, color) {
             const historyDiv = document.getElementById('history');
@@ -293,31 +324,31 @@
 
             if (!validateGamble(GambleAmount)) {
                 alert('Please enter a valid multiple of 5 or 10.');
-                document.getElementById('Gamble-amount').focus();  
+                document.getElementById('Gamble-amount').focus();
                 return;
             }
 
             if (GambleAmount < 50) {
-                alert('The maximum gamble amount is 50');
-                document.getElementById('Gamble-amount').focus();  
+                alert('The minimum gamble amount is 50.');
+                document.getElementById('Gamble-amount').focus();
                 return;
             }
 
-            if (currentAmount >= 2000 && GambleAmount < 500) {
-                alert('When your balance is above 2000, you must Gamble 500 or more.');
-                document.getElementById('Gamble-amount').focus(); 
+            if (currentAmount >= 10000 && GambleAmount < 1000) {
+                alert('When your balance is above 10000, you must gamble 1000 or more.');
+                document.getElementById('Gamble-amount').focus();
                 return;
             }
 
             if (GambleAmount > currentAmount) {
-                alert('You do not have enough balance to place this Gamble.');
-                document.getElementById('Gamble-amount').focus();  
+                alert('You do not have enough balance to place this gamble.');
+                document.getElementById('Gamble-amount').focus();
                 return;
             }
 
             if (GambleAmount > maxGambleAmount) {
-                alert(`You cannot Gamble more than 90% of your current amount. Maximum Gamble amount is ${maxGambleAmount}.`);
-                document.getElementById('Gamble-amount').focus();  
+                alert(`You cannot gamble more than 90% of your current amount. Maximum gamble amount is ${maxGambleAmount}.`);
+                document.getElementById('Gamble-amount').focus();
                 return;
             }
 
@@ -339,10 +370,25 @@
                             resultText += `Profit: ${GambleAmount} + ${outcome}`;
                             color = "#38a832";
                             currentAmount += outcome + GambleAmount;
+
+                            if (outcome > highestGain) {
+                                highestGain = outcome;
+                                document.getElementById('highest-gain').innerText = highestGain;
+                            }
+
+                            if (outcome === GambleAmount * 2) {
+                                jackpotHitCount++;
+                                document.getElementById('jackpot-count').innerText = jackpotHitCount+10;
+                            }
                         } else if (outcome < 0) {
                             resultText = `You lost: ${GambleAmount} + ${Math.abs(outcome)}`;
                             color = "#b80000";
                             currentAmount += outcome;
+
+                            if (Math.abs(outcome) > highestLoss) {
+                                highestLoss = Math.abs(outcome);
+                                document.getElementById('highest-loss').innerText = highestLoss;
+                            }
                         } else {
                             resultText = "No loss, no profit.";
                             color = "#3234a8";
@@ -353,8 +399,14 @@
                         document.getElementById('starting-amount').innerText = currentAmount;
                         updateHistory(GambleAmount, resultText, currentAmount, color);
 
-                        if (currentAmount >= 100000) {
+                        if (currentAmount > highestCurrentAmount) {
+                            highestCurrentAmount = currentAmount;
+                            document.getElementById('highest-curent').innerText = highestCurrentAmount;
+                        }
+
+                        if (currentAmount >= 100000 && !gameWon) {
                             alert("Congratulations! You've won the game!");
+                            gameWon = true;
                             document.getElementById('reset-btn').style.display = 'block';
                         } else if (currentAmount <= 49) {
                             alert("You've lost all your money. Would you like to reset the game?");
@@ -363,25 +415,26 @@
 
                         document.getElementById('Gamble-amount').value = '';
                         gambleButton.disabled = false;
-                        document.getElementById('Gamble-amount').focus();  
+                        document.getElementById('Gamble-amount').focus();
                     }, 500);
                 }, 500);
             }, 500);
         }
 
-
         function resetGame() {
-            currentAmount = 1000;
-            jackpotHitCount = 1;
+            currentAmount = 1500;
+            jackpotHitCount = 0;
+
             document.getElementById('starting-amount').innerText = currentAmount;
+            document.getElementById('jackpot-count').innerText = jackpotHitCount;
+
             document.getElementById('result').textContent = "";
             document.getElementById('result').style.color = "black";
             document.getElementById('history').innerHTML = "";
             document.getElementById('reset-btn').style.display = 'none';
             document.getElementById('Gamble-amount').value = '';
-            document.getElementById('Gamble-amount').focus();  
+            document.getElementById('Gamble-amount').focus();
         }
-
 
     </script>
 </body>
