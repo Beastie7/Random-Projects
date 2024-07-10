@@ -46,7 +46,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: linear-gradient(to left top, #000000, #ffffff);
+            background-image: linear-gradient(to left top, #25013b, #ffffff);
             opacity: 0.7;
             z-index: -1;
             border-radius: 50px;
@@ -215,18 +215,129 @@
             top: 20px;
             right: 20px;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.8);
             padding: 10px;
             text-align: left;
             font-size: 0.9em;
             font-family: monospace;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 200px;
+            overflow: hidden;
+        }
+
+        .stats-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to left top, #5c0099, #000000);
+            opacity: 0.7;
+            z-index: -1;
+            border-radius: 20px;
+        }
+
+        .stats-container p {
+            position: relative;
+            z-index: 1;
+            opacity: 1;
+            color: white;
+        }
+
+
+        .description-container {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            text-align: left;
+            font-family: monospace;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            overflow: hidden;
+        }
+
+        .description-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to left top, #000000, #ffffff);
+            opacity: 0.7;
+            z-index: -1;
+            border-radius: 20px;
+        }
+
+        .description-container p {
+            position: relative;
+            z-index: 1;
+            opacity: 1;
+            font-weight: 100;
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px;
+            }
+
+            .description-container {
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                max-width: 100%;
+                width: auto;
+                margin-bottom: 20px;
+                font: 1em sans-serif;
+            }
+
+            .container {
+                max-width: 100%;
+                width: auto;
+            }
+
+            .stats-container {
+                position: relative;
+                top: auto;
+                right: auto;
+                max-width: 100%;
+                width: auto;
+                margin-top: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
+
+    <div class="description-container">
+        <div id="desc-text">
+            <p>A fun gambling game where your main aim is to reach <b>1,00,000</b> from the starting amount of
+                <b>1,500</b>.
+            </p>
+            <p>How the game works:</p>
+            <p>Input the amount you want to gamble.</p>
+            <p>Your chances:</p>
+            <p><b>30%</b> = <b>Loss chances</b> where you can suffer a loss of <b>20% to 70%</b></p>
+            <p><b>10%</b> = <b>No profit No loss chances</b> where you don't suffer a loss but also don't gain any
+                profit.
+            </p>
+            <p><b>40%</b> = <b>Profit chances</b> where the profit can be gained from <b>10% to 100%</b></p>
+            <p><b>10%</b> = <b>JACKPOT CHANCES</b> where the profit can be gained up to <b>200%</b> of the amount
+                gambled.
+            </p>
+            <p><b>Unique trait of the game:</b> Every time you hit a jackpot, your chances of hitting another jackpot are
+                increased
+                by <b>2%</b> and your chances of loss are reduced by <b>2%</b> simultaneously.</p>
+        </div>
+    </div>
 
     <div class="container">
         <img src="https://mods.store.gx.me/mod/ce2c3e3d-d57b-4d3b-9a6c-5dac596fba47/cover/c803abe3-9046-4f6d-8d0c-f2b4ee58b8a0/webp-1280x720?e1a17d27bb3922bcbb1b03e877931df6"
@@ -242,10 +353,12 @@
         <button id="reset-btn" style="display: none;" onclick="resetGame()">Reset Game</button>
     </div>
     <div class="stats-container">
-        <p>Highest Amount record: <span id="highest-curent">1500</span></p>
-        <p>Current % of Jackpots: <span id="jackpot-count">10</span></p>
-        <p>Highest Amount Gained: <span id="highest-gain">0</span></p>
-        <p>Highest Amount Lost: <span id="highest-loss">0</span></p>
+        <div id="statText">
+            <p>Highest Amount record: <span id="highest-curent">1500</span></p>
+            <p>Current % of Jackpots: <span id="jackpot-count">10</span></p>
+            <p>Highest Amount Gained: <span id="highest-gain">0</span></p>
+            <p>Highest Amount Lost: <span id="highest-loss">0</span></p>
+        </div>
     </div>
 
     <script>
@@ -318,6 +431,13 @@
             historyDiv.prepend(historyEntry);
         }
 
+        function activateFrenzyMode() {
+            const frenzyImage = 'https://media.tenor.com/3fzEJTA3ykUAAAAM/hakari-kinji-kinji-hakari.gif';
+            document.getElementById('header-image').src = frenzyImage;
+
+            alert("Frenzy Mode Activated! Jackpot chance is 98%, Loss chance is 2%. Jackpot gives 200% increase but loss gives 200% loss of the amount gambled. Minimum gamble amount is 10,000.");
+        }
+
         function gamble() {
             const GambleAmount = parseInt(document.getElementById('Gamble-amount').value);
             const maxGambleAmount = Math.floor(currentAmount * 0.9);
@@ -378,7 +498,7 @@
 
                             if (outcome === GambleAmount * 2) {
                                 jackpotHitCount++;
-                                document.getElementById('jackpot-count').innerText = jackpotHitCount+10;
+                                document.getElementById('jackpot-count').innerText = jackpotHitCount + 10;
                             }
                         } else if (outcome < 0) {
                             resultText = `You lost: ${GambleAmount} + ${Math.abs(outcome)}`;
@@ -408,6 +528,7 @@
                             alert("Congratulations! You've won the game!");
                             gameWon = true;
                             document.getElementById('reset-btn').style.display = 'block';
+                            activateFrenzyMode();
                         } else if (currentAmount <= 49) {
                             alert("You've lost all your money. Would you like to reset the game?");
                             document.getElementById('reset-btn').style.display = 'block';
@@ -420,6 +541,10 @@
                 }, 500);
             }, 500);
         }
+
+
+
+
 
         function resetGame() {
             currentAmount = 1500;
