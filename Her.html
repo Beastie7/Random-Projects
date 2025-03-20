@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 4 Months, My Love!</title>
+    <style>
+        body {
+            font-family: Garamond;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffe0b2, #ffcdd2);
+            /* Light orange to light pink gradient */
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #e91e63;
+            /* Pink accent */
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .message-reveal {
+            background-color: #f8bbd0;
+            /* Lighter pink */
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #hidden-message {
+            display: none;
+            margin-top: 15px;
+            color: #880e4f;
+            /* Darker pink */
+        }
+
+        #countdown {
+            font-size: 1.5em;
+            margin-top: 30px;
+            color: #6a1b9a;
+            /* Purple accent */
+            cursor: pointer;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Happy 4 Months, My Love!</h1>
+        <p>Four months of joy, laughter, fights, crying, horny and love. Here's to many more.</p>
+
+        <div class="message-reveal" onclick="revealMessage()">
+            Click to Reveal a Special Message!
+        </div>
+        <p id="hidden-message">My dearest one, <br><br> To say you are the sunshine in my day and the moon in my night
+            feels like whispering a
+            truth that the universe already knows. It's not just a poetic sentiment; it's the very essence of how you
+            illuminate my existence. You are the warmth that chases away the shadows, the radiant energy that fuels my
+            spirit when the world feels dim. <br><br>When I say you are the sunshine, I mean you are the constant source
+            of joy, the
+            unwavering optimism that colours my world with vibrant hues. You are the laughter that echoes in my heart,
+            the smile that brightens even the most mundane moments. Like the sun, you provide the essential nourishment
+            that allows me to grow and flourish. You are the dependable light that guides me through uncertainty, the
+            warmth that melts away my fears and anxieties. <br><br>And when I say you are the moon in my night, I mean
+            you are the serene presence that
+            calms my restless soul. You are the gentle glow that guides me through the darkness, the silent companion
+            that understands my deepest thoughts and unspoken dreams. Like the moon, you reflect a softer, more subtle
+            beauty, a tranquil strength that soothes my worries and brings me peace. You are the constant, comforting
+            presence that reminds me I am never truly alone, even in the darkest of nights.<br><br>"I love you more than
+            words can say" is a phrase that feels both incredibly vast and
+            utterly insufficient. Words, however beautiful, can only capture a fraction of the depth and intensity of my
+            feelings for you. It's a love that transcends language, a connection that goes beyond the tangible. It's a
+            love that fills every corner of my being, a love that grows stronger with each passing moment.<br><br>It's a
+            love that sees the beauty in your imperfections, the strength in your
+            vulnerability, and the kindness in your heart. It's a love that celebrates your triumphs and supports you
+            through your challenges. It's a love that cherishes every shared memory, every whispered secret, every
+            stolen glance.<br><br>You are not just a part of my life; you are the very reason for its brilliance. You
+            are
+            the melody in my song, the poetry in my soul, the masterpiece of my heart. You are my everything, and I am
+            eternally grateful for your presence in my life.
+
+        <div id="countdown" onclick="startCountdown()">
+            Countdown to Our Anniversary!
+        </div>
+    </div>
+
+    <script>
+        function revealMessage() {
+            document.getElementById('hidden-message').style.display = 'block';
+        }
+
+        function startCountdown() {
+            const anniversaryDate = new Date('2025-03-24T00:00:00').getTime(); //replace 2024 with the current year.
+            const countdownElement = document.getElementById('countdown');
+
+            const updateCountdown = () => {
+                const now = new Date().getTime();
+                const distance = anniversaryDate - now;
+
+                if (distance < 0) {
+                    countdownElement.innerHTML = "Happy Anniversary!";
+                    clearInterval(interval);
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            };
+
+            updateCountdown();
+            const interval = setInterval(updateCountdown, 1000);
+        }
+    </script>
+</body>
+
+</html>
