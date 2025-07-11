@@ -40,7 +40,7 @@
         }
         
         .gradient-btn {
-            background: linear-gradient(45deg, #8A2BE2, #00008B);
+            background: linear-gradient(45deg, #000000, #E75480);
             border: none;
             color: white;
             font-weight: bold;
@@ -49,7 +49,7 @@
         
         .gradient-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+            box-shadow: 0 5px 15px rgba(231, 84, 128, 0.4);
         }
         
         .gradient-btn:active {
@@ -58,6 +58,50 @@
         
         .jackpot-animation {
             animation: jackpot 0.5s infinite alternate;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            animation: confetti 5s ease-in-out;
+            z-index: 1000;
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .victory-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: bold;
+            text-align: center;
+            color: gold;
+            text-shadow: 0 0 10px #fff, 0 0 20px #ff0, 0 0 30px #f80, 0 0 40px #f00;
+            z-index: 1001;
+            animation: victoryPulse 1s infinite alternate;
+        }
+
+        @keyframes victoryPulse {
+            from {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
         }
         
         @keyframes jackpot {
@@ -127,7 +171,7 @@
             <!-- Left Column - Game Controls -->
             <div class="glass-card p-3 sm:p-4 md:p-6 lg:col-span-1">
                 <div class="flex flex-col items-center mb-6">
-                    <div id="balanceDisplay" class="text-2xl sm:text-3xl font-bold mb-2">₹1500</div>
+                    <div id="balanceDisplay" class="text-2xl sm:text-3xl font-bold mb-2">₹2000</div>
                     <div class="text-sm text-gray-300">Current Balance</div>
                 </div>
 
@@ -155,9 +199,10 @@
                 <div id="frenzyExplanation" class="mt-4 p-3 rounded-md bg-gray-800 bg-opacity-50 text-sm hidden">
                     <p class="mb-2">Frenzy Mode Rules:</p>
                     <ul class="space-y-1">
-                        <li>• 50% chance for 200% profit (Jackpot)</li>
-                        <li>• 50% chance for 200% loss</li>
+                        <li>• 50% chance for 250% profit (Frenzy Jackpot - 250%)</li>
+                        <li>• 50% chance for 150% loss (Frenzy Loss)</li>
                         <li>• Minimum bet: ₹10,000</li>
+                        <li>• Goal: Reach ₹10,00,00,000 to win!</li>
                     </ul>
                 </div>
             </div>
@@ -168,7 +213,7 @@
                 <ul class="space-y-2 text-sm">
                     <li class="flex items-start">
                         <span class="text-cyan-400 mr-2">•</span>
-                        <span>Start with ₹1500, goal is ₹10,00,000</span>
+                        <span>Start with ₹2000, goal is ₹10,00,000</span>
                     </li>
                     <li class="flex items-start">
                         <span class="text-cyan-400 mr-2">•</span>
@@ -176,7 +221,7 @@
                     </li>
                     <li class="flex items-start">
                         <span class="text-cyan-400 mr-2">•</span>
-                        <span>10% chance for no profit/loss</span>
+                        <span>18% chance for no profit/loss</span>
                     </li>
                     <li class="flex items-start">
                         <span class="text-cyan-400 mr-2">•</span>
@@ -184,7 +229,7 @@
                     </li>
                     <li class="flex items-start">
                         <span class="text-cyan-400 mr-2">•</span>
-                        <span>10% chance for JACKPOT (+200%)</span>
+                        <span>2% chance for JACKPOT (+200%)</span>
                     </li>
                     <li class="flex items-start">
                         <span class="text-cyan-400 mr-2">•</span>
@@ -192,7 +237,7 @@
                     </li>
                     <li class="flex items-start">
                         <span class="text-cyan-400 mr-2">•</span>
-                        <span>At ₹10,00,000: Frenzy Mode (50% jackpot, 50% ultra loss)</span>
+                        <span>At ₹10,00,000: Frenzy Mode (50% Frenzy Jackpot, 50% Frenzy Loss)</span>
                     </li>
                 </ul>
 
@@ -257,12 +302,12 @@
 
     <script>
         // Game state
-        let balance = 1500;
-        let highestAmount = 1500;
+        let balance = 2000;
+        let highestAmount = 2000;
         let jackpotsHit = 0;
         let highestProfit = 0;
         let highestLoss = 0;
-        let jackpotChance = 10;
+        let jackpotChance = 2;
         let lossChance = 30;
         let frenzyMode = false;
         let ultraLossChance = 50;
@@ -414,14 +459,33 @@
             if (frenzyMode) {
                 // Frenzy mode: 50% jackpot, 50% ultra loss
                 if (random < 50) {
-                    // Ultra Loss (-200%)
-                    profit = -betAmount * 2;
-                    result = "ULTRA LOSS!";
+                    // Frenzy Loss (-150%)
+                    profit = -betAmount * 1.5;
+                    result = "FRENZY LOSS!";
                 } else {
-                    // Jackpot (+200%)
-                    profit = betAmount * 2;
+                    // Frenzy Jackpot (+250%)
+                    profit = betAmount * 2.5;
                     result = "FRENZY JACKPOT!";
                     jackpotsHit++;
+                }
+
+                // Check for ultimate victory
+                if (balance >= 100000000) {
+                    createConfetti();
+                    const victoryMsg = document.createElement('div');
+                    victoryMsg.className = 'victory-message';
+                    victoryMsg.textContent = 'ULTIMATE VICTORY!';
+                    document.body.appendChild(victoryMsg);
+                    
+                    // Disable further gambling
+                    gambleBtn.disabled = true;
+                    statusMessage.textContent = "CONGRATULATIONS! You've won the game. Please reset to play again.";
+                    statusMessage.className = "mt-4 p-3 rounded-md text-center bg-purple-900 bg-opacity-70 frenzy-animation";
+                    statusMessage.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        victoryMsg.remove();
+                    }, 5000);
                 }
             } else {
                 if (random < lossChance) {
@@ -489,9 +553,12 @@
             // Check for win condition
             if (balance >= 1000000 && !frenzyMode) {
                 setTimeout(() => {
-                    statusMessage.textContent = "CONGRATULATIONS! You've reached ₹10,00,000. EXTREME FRENZY MODE ACTIVATED!";
+                    statusMessage.textContent = "CONGRATULATIONS! You've reached ₹10,00,000. EXTREME FRENZY MODE ACTIVATED! AIM FOR ₹10,00,00,000!";
                     statusMessage.className = "mt-4 p-3 rounded-md text-center bg-purple-900 bg-opacity-70 frenzy-animation";
                 }, 1000);
+            } else if (balance >= 100000000) {
+                gambleBtn.disabled = true;
+                resetBtn.classList.remove('hidden');
             }
             
             // Update UI
@@ -503,12 +570,12 @@
 
         // Reset game
         function resetGame() {
-            balance = 1500;
-            highestAmount = 1500;
+            balance = 2000;
+            highestAmount = 2000;
             jackpotsHit = 0;
             highestProfit = 0;
             highestLoss = 0;
-            jackpotChance = 10;
+            jackpotChance = 2;
             lossChance = 30;
             frenzyMode = false;
             gameHistory = [];
@@ -537,6 +604,25 @@
             }
         });
         
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
+            for (let i = 0; i < 200; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
         // Initialize UI
         updateUI();
     </script>
