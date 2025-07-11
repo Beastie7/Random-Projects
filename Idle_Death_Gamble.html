@@ -1,584 +1,544 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Idle Death Gamble</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Roboto+Mono&family=Press+Start+2P&display=swap">
     <style>
         body {
-            font-family: monospace;
-            font-weight: bolder;
-            background-image: url(https://staticg.sportskeeda.com/editor/2023/09/c7a31-16938663098356-1920.jpg?w=640);
-            background-repeat: no-repeat;
+            background-image: url('https://staticg.sportskeeda.com/editor/2023/09/c7a31-16938663098356-1920.jpg?w=640');
             background-size: cover;
-            backdrop-filter: blur(4px);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        p {
-            font-size: 1.4em;
-        }
-
-        .container {
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Roboto Mono', monospace;
             position: relative;
-            border-radius: 50px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 90%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            overflow: hidden;
         }
-
-        .container::before {
+        
+        body::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: linear-gradient(to left top, #25013b, #ffffff);
-            opacity: 0.7;
+            background-image: inherit;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            filter: blur(5px);
             z-index: -1;
-            border-radius: 50px;
         }
-
-        h1 {
-            display: none;
-        }
-
-        .header-image {
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 20px;
+        
+        .glass-card {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
             border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        button {
-            position: relative;
-            margin-top: 10px;
-            padding: 10px 20px;
-            width: auto;
-            outline: none;
-            text-decoration: none;
-            justify-content: center;
-            align-items: center;
-            cursor: default;
+        
+        .gradient-btn {
+            background: linear-gradient(45deg, #FF00FF, #00FFFF);
             border: none;
-            background-image: linear-gradient(#1c0d40, #e100ff);
-            border-radius: 5px;
             color: white;
-            font-weight: 300;
-            font-size: 18px;
-            font-family: monospace;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.02, 0.01, 0.47, 1);
-        }
-
-        button:hover {
-            background-image: linear-gradient(#190055, #e100ff);
-            animation: sh0 0.5s ease-in-out both;
-        }
-
-        @keyframes sh0 {
-            0% {
-                transform: rotate(0deg) translate3d(0, 0, 0);
-            }
-
-            25% {
-                transform: rotate(7deg) translate3d(0, 0, 0);
-            }
-
-            50% {
-                transform: rotate(-7deg) translate3d(0, 0, 0);
-            }
-
-            75% {
-                transform: rotate(1deg) translate3d(0, 0, 0);
-            }
-
-            100% {
-                transform: rotate(0deg) translate3d(0, 0, 0);
-            }
-        }
-
-        button:hover span {
-            animation: storm 0.7s ease-in-out both;
-            animation-delay: 0.06s;
-        }
-
-        button::before,
-        button::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #fff;
-            opacity: 0;
-            transition: transform 0.15s cubic-bezier(0.02, 0.01, 0.47, 1), opacity 0.15s cubic-bezier(0.02, 0.01, 0.47, 1);
-            z-index: -1;
-            transform: translate(100%, -25%) translate3d(0, 0, 0);
-        }
-
-        button:hover::before,
-        button:hover::after {
-            opacity: 0.15;
-            transition: transform 0.2s cubic-bezier(0.02, 0.01, 0.47, 1), opacity 0.2s cubic-bezier(0.02, 0.01, 0.47, 1);
-        }
-
-        button:hover::before {
-            transform: translate3d(50%, 0, 0) scale(0.9);
-        }
-
-        button:hover::after {
-            transform: translate(50%, 0) scale(1.1);
-        }
-
-        #result {
-            margin-top: 20px;
-            background-color: #ffffff;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-            text-align: center;
-            padding: 0 10px;
             font-weight: bold;
+            transition: all 0.3s;
         }
-
-        #history {
-            background-color: white;
-            margin-top: 20px;
-            text-align: center;
-            max-height: 100px;
-            overflow-y: auto;
-            font-size: 1.2em;
+        
+        .gradient-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
         }
-
-        #history div {
-            margin-bottom: 5px;
+        
+        .gradient-btn:active {
+            transform: translateY(0);
         }
-
-        #reset-btn {
-            margin-top: 20px;
+        
+        .jackpot-animation {
+            animation: jackpot 0.5s infinite alternate;
         }
-
-        .coolinput {
-            display: flex;
-            flex-direction: column;
-            width: fit-content;
-            max-width: 240px;
-            margin: auto;
-        }
-
-        .coolinput label.text {
-            font-size: 0.9rem;
-            color: #8465ff;
-            font-weight: 700;
-            position: relative;
-            top: 0.5rem;
-            margin: 0 0 0 7px;
-            padding: 0 3px;
-            background: white;
-            width: fit-content;
-        }
-
-        .coolinput input[type="text"].input,
-        input[type="number"] {
-            padding: 11px 10px;
-            font-size: 0.75rem;
-            border: 2px #9e5dff solid;
-            border-radius: 5px;
-            background: #d9c8ff;
-            font-family: monospace;
-            font-size: 18px;
-
-        }
-
-        .coolinput input[type="text"].input:focus,
-        input[type="number"]:focus {
-            outline: none;
-        }
-
-        .stats-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            border-radius: 20px;
-            padding: 10px;
-            text-align: left;
-            font-size: 0.9em;
-            font-family: monospace;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 200px;
-            overflow: hidden;
-        }
-
-        .stats-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to left top, #5c0099, #000000);
-            opacity: 0.7;
-            z-index: -1;
-            border-radius: 20px;
-        }
-
-        .stats-container p {
-            position: relative;
-            z-index: 1;
-            opacity: 1;
-            color: white;
-        }
-
-
-        .description-container {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            padding: 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            text-align: left;
-            font-family: monospace;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
-            overflow: hidden;
-        }
-
-        .description-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to left top, #000000, #ffffff);
-            opacity: 0.7;
-            z-index: -1;
-            border-radius: 20px;
-        }
-
-        .description-container p {
-            position: relative;
-            z-index: 1;
-            opacity: 1;
-            font-weight: 100;
-        }
-
-        @media screen and (max-width: 768px) {
-            body {
-                flex-direction: column;
-                align-items: center;
-                padding: 10px;
-                height: 100%;
+        
+        @keyframes jackpot {
+            from {
+                text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700;
             }
-
-            .description-container {
-                position: relative;
-                top: auto;
-                left: auto;
-                right: auto;
-                transform: none;
-                max-width: 100%;
-                height: 100%;
-                margin: 20px auto;
-                padding: 15px;
-                font-size: 1em;
-                text-align: justify;
-                background: linear-gradient(to left top, #1a0034, #ffffff);
-                border-radius: 20px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            to {
+                text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FF8C00;
             }
-
-            .container {
-                max-width: 100%;
-                width: 80%;
-                margin: 20px auto;
+        }
+        
+        .frenzy-animation {
+            animation: frenzy 0.3s infinite alternate;
+        }
+        
+        @keyframes frenzy {
+            from {
+                text-shadow: 0 0 5px #FF0000, 0 0 10px #FF0000;
+                transform: scale(1);
             }
-
-            .stats-container {
-                position: relative;
-                top: auto;
-                right: auto;
-                max-width: 100%;
-                width: 80%;
-                margin: 20px auto;
-                padding: 15px;
-                font-size: 0.9em;
-                text-align: justify;
-                background: linear-gradient(to left top, #5c0099, #000000);
-                opacity: 0.7;
-                border-radius: 20px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            to {
+                text-shadow: 0 0 10px #FF0000, 0 0 20px #FF0000, 0 0 30px #FF4500;
+                transform: scale(1.02);
             }
+        }
+        
+        .history-item {
+            transition: all 0.3s;
+        }
+        
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 255, 255, 0.5) transparent;
+        }
+        
+        .scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 255, 255, 0.5);
+            border-radius: 3px;
+        }
+        
+        .title-font {
+            font-family: 'Major Mono Display', monospace;
         }
     </style>
 </head>
-
-<body>
-
-    <div class="description-container">
-        <div id="desc-text">
-            <h2 style="text-align: center; font-size: 30px;">Idle Death Gamble</h2>
-            <p>A fun gambling game where your main aim is to reach <b>1,00,000</b> from the starting amount of
-                <b>1,500</b>.
-            </p>
-            <p>How the game works:</p>
-            <p>Input the amount you want to gamble.</p>
-            <p>Your chances:</p>
-            <p><b>40%</b> = <b>Loss chances</b> where you can suffer a loss of <b>20% to 70%</b></p>
-            <p><b>10%</b> = <b>No profit No loss chances</b> where you don't suffer a loss but also don't gain any
-                profit.
-            </p>
-            <p><b>40%</b> = <b>Profit chances</b> where the profit can be gained from <b>10% to 100%</b></p>
-            <p><b>10%</b> = <b>JACKPOT CHANCES</b> where the profit can be gained up to <b>200%</b> of the amount
-                gambled.
-            </p>
-            <p><b>Unique trait of the game:</b> Every time you hit a jackpot, your chances of hitting another jackpot
-                are
-                increased
-                by <b>2%</b> and your chances of loss are reduced by <b>2%</b> simultaneously.</p>
+<body class="min-h-screen text-white p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col items-center mb-6">
+            <img src="https://mods.store.gx.me/mod/ce2c3e3d-d57b-4d3b-9a6c-5dac596fba47/cover/c803abe3-9046-4f6d-8d0c-f2b4ee58b8a0/webp-1280x720?e1a17d27bb3922bcbb1b03e877931df6" alt="Idle Death Gamble" class="w-full max-w-2xl rounded-lg mb-4">
+            <h1 class="text-3xl md:text-4xl font-bold text-white p-4 mb-4" style="font-family: 'Press Start 2P', cursive; text-shadow: 3px 3px 0 #000, 0 0 10px #FF00FF, 0 0 20px #00FFFF; letter-spacing: -1px;">IDLE DEATH GAMBLE</h1>
         </div>
-    </div>
 
-    <div class="container">
-        <img src="https://mods.store.gx.me/mod/ce2c3e3d-d57b-4d3b-9a6c-5dac596fba47/cover/c803abe3-9046-4f6d-8d0c-f2b4ee58b8a0/webp-1280x720?e1a17d27bb3922bcbb1b03e877931df6"
-            alt="Idle Death Gamble" class="header-image">
-        <p>Current Amount: <span id="starting-amount">1000</span></p>
-        <div class="coolinput">
-            <label for="Gamble-amount" class="text">Gamble Amount:</label>
-            <input type="number" id="Gamble-amount" placeholder="Enter Gamble amount">
-        </div>
-        <button id="gamble-button" onclick="gamble()">G A M B L E</button>
-        <p id="result"></p>
-        <div id="history"></div>
-        <button id="reset-btn" style="display: none;" onclick="resetGame()">Reset Game</button>
-    </div>
-    <div class="stats-container">
-        <div id="statText">
-            <p>Highest Amount record: <span id="highest-curent">1500</span></p>
-            <p>Current % of Jackpots: <span id="jackpot-count">10</span></p>
-            <p>Highest Amount Gained: <span id="highest-gain">0</span></p>
-            <p>Highest Amount Lost: <span id="highest-loss">0</span></p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column - Game Controls -->
+            <div class="glass-card p-6 lg:col-span-1">
+                <div class="flex flex-col items-center mb-6">
+                    <div id="balanceDisplay" class="text-3xl font-bold mb-2">₹1500</div>
+                    <div class="text-sm text-gray-300">Current Balance</div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="betAmount" class="block text-sm font-medium mb-2">Bet Amount (₹)</label>
+                    <input type="number" id="betAmount" class="w-full bg-gray-800 bg-opacity-50 border border-gray-700 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" placeholder="Enter amount" min="50" step="5">
+                    <div class="flex justify-between mt-2 text-xs text-gray-400">
+                        <span id="minBet">Min: ₹50</span>
+                        <span id="maxBet">Max: ₹1350</span>
+                    </div>
+                </div>
+
+                <button id="gambleBtn" class="gradient-btn w-full py-3 rounded-md font-bold mb-4">GAMBLE</button>
+                <button id="resetBtn" class="w-full py-3 rounded-md font-bold bg-gray-800 bg-opacity-50 border border-gray-700 hover:bg-opacity-70 transition hidden">RESET GAME</button>
+
+                <div id="statusMessage" class="mt-4 p-3 rounded-md text-center hidden"></div>
+
+                <div id="jackpotIndicator" class="mt-6 p-3 rounded-md bg-gradient-to-r from-yellow-600 to-yellow-400 text-center font-bold hidden">
+                    JACKPOT CHANCE: <span id="jackpotChance">10</span>%
+                </div>
+
+                <div id="frenzyMode" class="mt-6 p-3 rounded-md bg-gradient-to-r from-red-600 to-purple-600 text-center font-bold frenzy-animation hidden">
+                    FRENZY MODE ACTIVATED!
+                </div>
+                <div id="frenzyExplanation" class="mt-4 p-3 rounded-md bg-gray-800 bg-opacity-50 text-sm hidden">
+                    <p class="mb-2">Frenzy Mode Rules:</p>
+                    <ul class="space-y-1">
+                        <li>• 98% chance for 200% profit (Jackpot)</li>
+                        <li>• 2% chance for 200% loss</li>
+                        <li>• Minimum bet: ₹10,000</li>
+                        <li>• Goal: Reach ₹10,000,000!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Middle Column - Game Info -->
+            <div class="glass-card p-6 lg:col-span-1">
+                <h2 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">GAME RULES</h2>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>Start with ₹1500, goal is ₹10,00,000</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>30% chance to lose 20%-70% of bet</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>10% chance for no profit/loss</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>40% chance to gain 10%-100%</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>10% chance for JACKPOT (+200%)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>Jackpot increases chance by 2%</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>At ₹10,00,000: Frenzy Mode (98% jackpot)</span>
+                    </li>
+                </ul>
+
+                <h2 class="text-xl font-bold mt-6 mb-4 border-b border-gray-700 pb-2">BETTING RULES</h2>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>Multiples of 5 or 10 only</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>Can't bet more than 90% of balance</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>If balance > ₹10,000: min bet ₹1,000</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>In Frenzy Mode: min bet ₹10,000</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>Otherwise: min bet ₹50</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">•</span>
+                        <span>Balance < ₹50: Game Over</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right Column - Stats & History -->
+            <div class="glass-card p-6 lg:col-span-1">
+                <h2 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">STATISTICS</h2>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-800 bg-opacity-30 p-3 rounded-md">
+                        <div class="text-sm text-gray-300">Highest Amount</div>
+                        <div id="highestAmount" class="text-xl font-bold">₹1500</div>
+                    </div>
+                    <div class="bg-gray-800 bg-opacity-30 p-3 rounded-md">
+                        <div class="text-sm text-gray-300">Jackpots Hit</div>
+                        <div id="jackpotsHit" class="text-xl font-bold">0</div>
+                    </div>
+                    <div class="bg-gray-800 bg-opacity-30 p-3 rounded-md">
+                        <div class="text-sm text-gray-300">Highest Profit</div>
+                        <div id="highestProfit" class="text-xl font-bold">₹0</div>
+                    </div>
+                    <div class="bg-gray-800 bg-opacity-30 p-3 rounded-md">
+                        <div class="text-sm text-gray-300">Highest Loss</div>
+                        <div id="highestLoss" class="text-xl font-bold">₹0</div>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">HISTORY</h2>
+                <div id="historyContainer" class="max-h-64 overflow-y-auto scroll-container">
+                    <div class="text-center text-gray-500 py-4">No bets placed yet</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        let highestCurrentAmount = 1500;
-        let highestGain = 0;
+        // Game state
+        let balance = 1500;
+        let highestAmount = 1500;
+        let jackpotsHit = 0;
+        let highestProfit = 0;
         let highestLoss = 0;
+        let jackpotChance = 10;
+        let lossChance = 30;
+        let frenzyMode = false;
+        let ultraLossChance = 50;
+        let gameHistory = [];
 
-        let gameWon = false;
-        window.onload = function () {
-            document.getElementById('Gamble-amount').focus();
-        };
-        let currentAmount = 1500;
-        let jackpotHitCount = 0;
-        const originalChances = {
-            loss: 40,
-            noLossNoProfit: 10,
-            profit: 40,
-            jackpot: 10
-        };
+        // DOM elements
+        const balanceDisplay = document.getElementById('balanceDisplay');
+        const betAmountInput = document.getElementById('betAmount');
+        const gambleBtn = document.getElementById('gambleBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const jackpotIndicator = document.getElementById('jackpotIndicator');
+        const jackpotChanceDisplay = document.getElementById('jackpotChance');
+        const frenzyModeDisplay = document.getElementById('frenzyMode');
+        const minBetDisplay = document.getElementById('minBet');
+        const maxBetDisplay = document.getElementById('maxBet');
+        const highestAmountDisplay = document.getElementById('highestAmount');
+        const jackpotsHitDisplay = document.getElementById('jackpotsHit');
+        const highestProfitDisplay = document.getElementById('highestProfit');
+        const highestLossDisplay = document.getElementById('highestLoss');
+        const historyContainer = document.getElementById('historyContainer');
 
-        document.getElementById('starting-amount').innerText = currentAmount;
-
-        function validateGamble(amount) {
-            return amount > 0 && (amount % 5 === 0 || amount % 10 === 0);
+        // Helper function to round to nearest 10
+        function roundToTen(num) {
+            return Math.round(num / 10) * 10;
         }
 
-        function calculateOutcome(amount) {
-            let lossChance = originalChances.loss - (2 * jackpotHitCount);
-            let noLossNoProfitChance = originalChances.noLossNoProfit;
-            let profitChance = originalChances.profit;
-            let jackpotChance = originalChances.jackpot + (2 * jackpotHitCount);
-
-            if (lossChance < originalChances.loss) {
-                lossChance = originalChances.loss;
-                noLossNoProfitChance -= 2;
+        // Update UI based on current state
+        function updateUI() {
+            balanceDisplay.textContent = `₹${roundToTen(balance).toLocaleString()}`;
+            highestAmountDisplay.textContent = `₹${roundToTen(highestAmount).toLocaleString()}`;
+            jackpotsHitDisplay.textContent = jackpotsHit;
+            highestProfitDisplay.textContent = `₹${roundToTen(highestProfit).toLocaleString()}`;
+            highestLossDisplay.textContent = `₹${roundToTen(highestLoss).toLocaleString()}`;
+            
+            // Update min/max bet
+            const minBet = frenzyMode ? 10000 : (balance > 10000 ? 1000 : 50);
+            const maxBet = roundToTen(Math.floor(balance * 0.9));
+            
+            minBetDisplay.textContent = `Min: ₹${minBet}`;
+            maxBetDisplay.textContent = `Max: ₹${maxBet}`;
+            
+            betAmountInput.min = minBet;
+            betAmountInput.max = maxBet;
+            betAmountInput.placeholder = `Enter amount (${minBet}-${maxBet})`;
+            
+            // Check for game over
+            if (balance < 50) {
+                statusMessage.textContent = "GAME OVER! You don't have enough to continue.";
+                statusMessage.className = "mt-4 p-3 rounded-md text-center bg-red-900 bg-opacity-70";
+                statusMessage.classList.remove('hidden');
+                gambleBtn.disabled = true;
+                resetBtn.classList.remove('hidden');
             }
-            if (noLossNoProfitChance < originalChances.noLossNoProfit) {
-                noLossNoProfitChance = originalChances.noLossNoProfit;
-                profitChance -= 2;
+            
+            // Check for frenzy mode
+            if (balance >= 1000000 && !frenzyMode) {
+                frenzyMode = true;
+                jackpotChance = 50;
+                ultraLossChance = 50;
+                jackpotIndicator.classList.add('hidden');
+                frenzyModeDisplay.classList.remove('hidden');
+                document.getElementById('frenzyExplanation').classList.remove('hidden');
             }
+            
+            // Update jackpot indicator if not in frenzy mode
+            if (!frenzyMode) {
+                jackpotChanceDisplay.textContent = jackpotChance;
+                if (jackpotChance > 10) {
+                    jackpotIndicator.classList.remove('hidden');
+                } else {
+                    jackpotIndicator.classList.add('hidden');
+                }
+            }
+        }
 
-            const totalChances = lossChance + noLossNoProfitChance + profitChance + jackpotChance;
-            const randomChance = Math.floor(Math.random() * totalChances);
+        // Add entry to history
+        function addHistoryEntry(amount, result, profit) {
+            const entry = {
+                amount: roundToTen(amount),
+                result,
+                profit: roundToTen(profit),
+                timestamp: new Date()
+            };
+            gameHistory.unshift(entry);
+            
+            // Update history display
+            if (historyContainer.firstChild.textContent === "No bets placed yet") {
+                historyContainer.innerHTML = '';
+            }
+            
+            const entryElement = document.createElement('div');
+            entryElement.className = 'history-item p-2 mb-1 rounded-md bg-gray-800 bg-opacity-30 flex justify-between items-center';
+            
+            const resultText = document.createElement('span');
+            resultText.className = profit >= 0 ? 'text-green-400' : 'text-red-400';
+            resultText.textContent = result;
+            
+            const amountText = document.createElement('span');
+            amountText.className = 'font-bold';
+            amountText.textContent = `₹${roundToTen(amount).toLocaleString()}`;
+            
+            const profitText = document.createElement('span');
+            profitText.className = profit >= 0 ? 'text-green-400' : 'text-red-400';
+            const roundedProfit = roundToTen(Math.abs(profit));
+            profitText.textContent = profit >= 0 ? `+₹${roundedProfit.toLocaleString()}` : `-₹${roundedProfit.toLocaleString()}`;
+            
+            entryElement.appendChild(resultText);
+            entryElement.appendChild(amountText);
+            entryElement.appendChild(profitText);
+            
+            historyContainer.insertBefore(entryElement, historyContainer.firstChild);
+            
+            // Limit history to 50 entries
+            if (gameHistory.length > 50) {
+                gameHistory.pop();
+                if (historyContainer.children.length > 50) {
+                    historyContainer.removeChild(historyContainer.lastChild);
+                }
+            }
+        }
 
-            if (randomChance < lossChance) {
-                const lossPercent = Math.ceil(Math.random() * 16) * 5;
-                return -Math.round((amount * lossPercent) / 100 / 5) * 5;
-            } else if (randomChance < lossChance + noLossNoProfitChance) {
-                return 0;
-            } else if (randomChance < lossChance + noLossNoProfitChance + profitChance) {
-                const profitPercent = Math.ceil(Math.random() * 20) * 5;
-                return Math.round((amount * profitPercent) / 100 / 5) * 5;
+        // Handle gamble
+        function handleGamble() {
+            const betAmount = parseInt(betAmountInput.value);
+            
+            // Validate bet amount
+            if (isNaN(betAmount) || betAmount < parseInt(betAmountInput.min) || betAmount > parseInt(betAmountInput.max)) {
+                statusMessage.textContent = `Please enter a valid amount between ₹${betAmountInput.min} and ₹${betAmountInput.max}`;
+                statusMessage.className = "mt-4 p-3 rounded-md text-center bg-red-900 bg-opacity-70";
+                statusMessage.classList.remove('hidden');
+                return;
+            }
+            
+            if (betAmount % 5 !== 0 && betAmount % 10 !== 0) {
+                statusMessage.textContent = "Bet amount must be a multiple of 5 or 10";
+                statusMessage.className = "mt-4 p-3 rounded-md text-center bg-red-900 bg-opacity-70";
+                statusMessage.classList.remove('hidden');
+                return;
+            }
+            
+            // Deduct bet amount from balance
+            balance -= betAmount;
+            
+            // Determine outcome
+            const random = Math.random() * 100;
+            let result, profit;
+            
+            if (frenzyMode) {
+                // Frenzy mode: 50% jackpot, 50% ultra loss
+                if (random < 50) {
+                    // Ultra Loss (-200%)
+                    profit = -betAmount * 2;
+                    result = "ULTRA LOSS!";
+                } else {
+                    // Jackpot (+200%)
+                    profit = betAmount * 2;
+                    result = "FRENZY JACKPOT!";
+                    jackpotsHit++;
+                }
             } else {
-                jackpotHitCount++;
-                return Math.round(amount * 2 / 5) * 5;
+                if (random < lossChance) {
+                    // Loss (20-70%)
+                    const lossPercent = 20 + Math.random() * 50;
+                    profit = -betAmount * (lossPercent / 100);
+                    result = "LOSS";
+                } else if (random < lossChance + 10) {
+                    // No profit/loss
+                    profit = 0;
+                    result = "BREAK EVEN";
+                } else if (random < lossChance + 10 + 40) {
+                    // Gain (10-100%)
+                    const gainPercent = 10 + Math.random() * 90;
+                    profit = betAmount * (gainPercent / 100);
+                    result = "WIN";
+                } else {
+                    // Jackpot (+200%)
+                    profit = betAmount * 2;
+                    result = "JACKPOT!";
+                    jackpotsHit++;
+                    
+                    // Increase jackpot chance for next time
+                    if (jackpotChance < 98) {
+                        jackpotChance += 2;
+                        lossChance -= 2;
+                    }
+                }
             }
+            
+            // Update balance with profit
+            balance += betAmount + profit;
+            
+            // Update stats
+            if (balance > highestAmount) {
+                highestAmount = balance;
+            }
+            
+            if (profit > highestProfit) {
+                highestProfit = profit;
+            }
+            
+            if (profit < 0 && Math.abs(profit) > highestLoss) {
+                highestLoss = Math.abs(profit);
+            }
+            
+            // Add to history
+            addHistoryEntry(betAmount, result, profit);
+            
+            // Show result message
+            const roundedProfit = roundToTen(Math.abs(profit));
+            statusMessage.textContent = `${result} - ${profit >= 0 ? 'Won' : 'Lost'} ₹${roundedProfit.toLocaleString()}`;
+            statusMessage.className = profit >= 0 ? 
+                "mt-4 p-3 rounded-md text-center bg-green-900 bg-opacity-70" : 
+                "mt-4 p-3 rounded-md text-center bg-red-900 bg-opacity-70";
+            
+            if (result.includes("JACKPOT")) {
+                statusMessage.classList.add('jackpot-animation');
+            } else {
+                statusMessage.classList.remove('jackpot-animation');
+            }
+            
+            statusMessage.classList.remove('hidden');
+            
+            // Check for win condition
+            if (balance >= 100000 && !frenzyMode) {
+                setTimeout(() => {
+                    statusMessage.textContent = "CONGRATULATIONS! You've reached ₹10,00,000. EXTREME FRENZY MODE ACTIVATED!";
+                    statusMessage.className = "mt-4 p-3 rounded-md text-center bg-purple-900 bg-opacity-70 frenzy-animation";
+                }, 1000);
+            }
+            
+            // Update UI
+            updateUI();
+            
+            // Clear input
+            betAmountInput.value = '';
         }
 
-        document.getElementById('Gamble-amount').addEventListener('keypress', function (event) {
-            if (event.key === 'Enter') {
-                gamble();
+        // Reset game
+        function resetGame() {
+            balance = 1500;
+            highestAmount = 1500;
+            jackpotsHit = 0;
+            highestProfit = 0;
+            highestLoss = 0;
+            jackpotChance = 10;
+            lossChance = 30;
+            frenzyMode = false;
+            gameHistory = [];
+            
+            // Reset UI
+            statusMessage.className = "mt-4 p-3 rounded-md text-center hidden";
+            statusMessage.classList.remove('jackpot-animation');
+            jackpotIndicator.classList.add('hidden');
+            frenzyModeDisplay.classList.add('hidden');
+            document.getElementById('frenzyExplanation').classList.add('hidden');
+            gambleBtn.disabled = false;
+            resetBtn.classList.add('hidden');
+            historyContainer.innerHTML = '<div class="text-center text-gray-500 py-4">No bets placed yet</div>';
+            
+            updateUI();
+        }
+
+        // Event listeners
+        gambleBtn.addEventListener('click', handleGamble);
+        resetBtn.addEventListener('click', resetGame);
+        
+        // Handle Enter key press on input field
+        betAmountInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleGamble();
             }
         });
-
-        function updateHistory(GambleAmount, result, currentAmount, color) {
-            const historyDiv = document.getElementById('history');
-            const historyEntry = document.createElement('div');
-            historyEntry.textContent = `Gamble: ${GambleAmount}, Result: ${result}, New Amount: ${currentAmount}`;
-            historyEntry.style.color = color;
-            historyDiv.prepend(historyEntry);
-        }
-
-        function activateFrenzyMode() {
-            const frenzyImage = 'https://media.tenor.com/3fzEJTA3ykUAAAAM/hakari-kinji-kinji-hakari.gif';
-            document.getElementById('header-image').src = frenzyImage;
-
-            alert("Frenzy Mode Activated! Jackpot chance is 98%, Loss chance is 2%. Jackpot gives 200% increase but loss gives 200% loss of the amount gambled. Minimum gamble amount is 10,000.");
-        }
-
-        function gamble() {
-            const GambleAmount = parseInt(document.getElementById('Gamble-amount').value);
-            const maxGambleAmount = Math.floor(currentAmount * 0.9);
-
-            if (!validateGamble(GambleAmount)) {
-                alert('Please enter a valid multiple of 5 or 10.');
-                document.getElementById('Gamble-amount').focus();
-                return;
-            }
-
-            if (GambleAmount < 50) {
-                alert('The minimum gamble amount is 50.');
-                document.getElementById('Gamble-amount').focus();
-                return;
-            }
-
-            if (currentAmount >= 10000 && GambleAmount < 1000) {
-                alert('When your balance is above 10000, you must gamble 1000 or more.');
-                document.getElementById('Gamble-amount').focus();
-                return;
-            }
-
-            if (GambleAmount > currentAmount) {
-                alert('You do not have enough balance to place this gamble.');
-                document.getElementById('Gamble-amount').focus();
-                return;
-            }
-
-            if (GambleAmount > maxGambleAmount) {
-                alert(`You cannot gamble more than 90% of your current amount. Maximum gamble amount is ${maxGambleAmount}.`);
-                document.getElementById('Gamble-amount').focus();
-                return;
-            }
-
-            currentAmount -= GambleAmount;
-            document.getElementById('starting-amount').innerText = currentAmount;
-
-            document.getElementById('result').textContent = "Gambling...";
-            const gambleButton = document.getElementById('gamble-button');
-            gambleButton.disabled = true;
-            setTimeout(() => {
-                document.getElementById('result').textContent = "...Calculating gamble...";
-                setTimeout(() => {
-                    document.getElementById('result').textContent = "...Calculating current amount";
-                    setTimeout(() => {
-                        const outcome = calculateOutcome(GambleAmount);
-                        let resultText, color;
-                        if (outcome > 0) {
-                            resultText = outcome === GambleAmount * 2 ? "Jackpot! " : "You won! ";
-                            resultText += `Profit: ${GambleAmount} + ${outcome}`;
-                            color = "#38a832";
-                            currentAmount += outcome + GambleAmount;
-
-                            if (outcome > highestGain) {
-                                highestGain = outcome;
-                                document.getElementById('highest-gain').innerText = highestGain;
-                            }
-
-                            if (outcome === GambleAmount * 2) {
-                                jackpotHitCount++;
-                                document.getElementById('jackpot-count').innerText = jackpotHitCount + 10;
-                            }
-                        } else if (outcome < 0) {
-                            resultText = `You lost: ${GambleAmount} + ${Math.abs(outcome)}`;
-                            color = "#b80000";
-                            currentAmount += outcome;
-
-                            if (Math.abs(outcome) > highestLoss) {
-                                highestLoss = Math.abs(outcome);
-                                document.getElementById('highest-loss').innerText = highestLoss;
-                            }
-                        } else {
-                            resultText = "No loss, no profit.";
-                            color = "#3234a8";
-                            currentAmount += GambleAmount;
-                        }
-                        document.getElementById('result').textContent = resultText;
-                        document.getElementById('result').style.color = color;
-                        document.getElementById('starting-amount').innerText = currentAmount;
-                        updateHistory(GambleAmount, resultText, currentAmount, color);
-
-                        if (currentAmount > highestCurrentAmount) {
-                            highestCurrentAmount = currentAmount;
-                            document.getElementById('highest-curent').innerText = highestCurrentAmount;
-                        }
-
-                        if (currentAmount >= 100000 && !gameWon) {
-                            alert("Congratulations! You've won the game!");
-                            gameWon = true;
-                            document.getElementById('reset-btn').style.display = 'block';
-                            activateFrenzyMode();
-                        } else if (currentAmount <= 49) {
-                            alert("You've lost all your money. Would you like to reset the game?");
-                            document.getElementById('reset-btn').style.display = 'block';
-                        }
-
-                        document.getElementById('Gamble-amount').value = '';
-                        gambleButton.disabled = false;
-                        document.getElementById('Gamble-amount').focus();
-                    }, 500);
-                }, 500);
-            }, 500);
-        }
-
-
-
-
-
-        function resetGame() {
-            currentAmount = 1500;
-            jackpotHitCount = 0;
-
-            document.getElementById('starting-amount').innerText = currentAmount;
-            document.getElementById('jackpot-count').innerText = jackpotHitCount;
-
-            document.getElementById('result').textContent = "";
-            document.getElementById('result').style.color = "black";
-            document.getElementById('history').innerHTML = "";
-            document.getElementById('reset-btn').style.display = 'none';
-            document.getElementById('Gamble-amount').value = '';
-            document.getElementById('Gamble-amount').focus();
-        }
-
+        
+        // Initialize UI
+        updateUI();
     </script>
 </body>
-
 </html>
